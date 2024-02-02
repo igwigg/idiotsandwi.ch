@@ -21,61 +21,95 @@
             margin-top: 20px;
             max-width: 80%;
             height: auto;
+            cursor: pointer; /* Make GIF clickable */
         }
         .friday-message, .friday-gif {
             margin-top: 20px;
             font-size: 1.2rem;
             display: none; /* Initially hidden */
         }
+        .intro-text {
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
     </style>
 </head>
 <body>
+    <div class="intro-text">Oh, are you that bored? Let me check if it's already weekend!</div>
     <div id="message">Checking if the weekend has started...</div>
-    <img id="gif" src="" alt="Weekend Status Gif">
+    <img id="gif" src="sad.gif" alt="Weekend Status Gif"> <!-- Ensure this src path is correct -->
     <div id="fridayMessage" class="friday-message"></div>
     <img id="fridayGif" class="friday-gif" src="" alt="Friday Status Gif">
+    <audio id="zonkAudio" src="zonk.mp3"></audio>
+    <audio id="yayAudio" src="yay.mp3" loop></audio>
 
     <script>
-        function checkWeekend() {
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
+        document.addEventListener("DOMContentLoaded", function() {
+            const gifImage = document.getElementById("gif");
+            const zonkAudio = document.getElementById("zonkAudio");
+            const yayAudio = document.getElementById("yayAudio");
 
-            let message = "No.. not yet";
-            let gif = "sad.gif";
+            gifImage.addEventListener("click", function() {
+                // Extract the filename part of the src attribute
+                const src = this.getAttribute('src').split('/').pop();
 
-            if ((dayOfWeek === 5 && (currentHour > 17 || (currentHour === 17 && currentMinute >= 0))) ||
-                dayOfWeek === 6 || dayOfWeek === 0 ||
-                (dayOfWeek === 1 && (currentHour === 0 && currentMinute <= 1))) {
-                message = "YAY! FINALLY WEEKEND!";
-                gif = "yay.gif";
+                if (src === "sad.gif") {
+                    zonkAudio.play();
+                } else if (src === "yay.gif") {
+                    if (yayAudio.paused) {
+                        yayAudio.play();
+                    } else {
+                        yayAudio.pause(); // Stop the audio if it's already playing
+                        yayAudio.currentTime = 0; // Reset audio to the start
+                    }
+                }
+            });
+
+            function checkWeekend() {
+                const now = new Date();
+                const dayOfWeek = now.getDay();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+
+                let message = "No.. not yet";
+                let gif = "sad.gif";
+
+                if ((dayOfWeek === 5 && (currentHour > 17 || (currentHour === 17 && currentMinute >= 0))) ||
+                    dayOfWeek === 6 || dayOfWeek === 0 ||
+                    (dayOfWeek === 1 && (currentHour === 0 && currentMinute <= 1))) {
+                    message = "YAY! FINALLY WEEKEND!";
+                    gif = "yay.gif";
+                }
+
+                document.getElementById('message').innerText = message;
+                document.getElementById('gif').src = gif;
+
+                checkFridaySpecial(dayOfWeek, currentHour, currentMinute);
             }
 
-            document.getElementById('message').innerText = message;
-            document.getElementById('gif').src = gif;
-
-            // Additional Friday check for "Bier nach Vier"
-            checkFridaySpecial(dayOfWeek, currentHour);
-        }
-
-        function checkFridaySpecial(dayOfWeek, currentHour) {
-            const fridayMessage = document.getElementById('fridayMessage');
-            const fridayGif = document.getElementById('fridayGif');
-            if (dayOfWeek === 5) { // Only show on Friday
-                fridayMessage.style.display = 'block'; // Make the message visible
-                fridayGif.style.display = 'block'; // Make the GIF visible
-                if (currentHour < 16) {
-                    fridayMessage.innerText = "Soon it's time for Bier nach Vier...";
-                    fridayGif.src = "waiting.gif"; // Set the source to the waiting GIF
-                } else {
-                    fridayMessage.innerText = "Yeah! Cheers! Enjoy Bier nach Vier!";
-                    fridayGif.src = "cheers.gif"; // Set the source to the cheers GIF
+            function checkFridaySpecial(dayOfWeek, currentHour, currentMinute) {
+                const fridayMessage = document.getElementById('fridayMessage');
+                const fridayGif = document.getElementById('fridayGif');
+                if (dayOfWeek === 5) { // Only show on Friday
+                    if (currentHour < 20 || (currentHour === 20 && currentMinute === 0)) {
+                        fridayMessage.style.display = 'block'; // Make the message visible
+                        fridayGif.style.display = 'block'; // Make the GIF visible
+                        if (currentHour < 16) {
+                            fridayMessage.innerText = "Soon it's time for Bier nach Vier...";
+                            fridayGif.src = "waiting.gif"; // Set the source to the waiting GIF
+                        } else {
+                            fridayMessage.innerText = "Yeah! Cheers! Enjoy Bier nach Vier!";
+                            fridayGif.src = "cheers.gif"; // Set the source to the cheers GIF
+                        }
+                    } else {
+                        fridayMessage.style.display = 'none'; // Hide after 20:00
+                        fridayGif.style.display = 'none';
+                    }
                 }
             }
-        }
 
-        checkWeekend();
+            checkWeekend();
+        });
     </script>
 </body>
 </html>
