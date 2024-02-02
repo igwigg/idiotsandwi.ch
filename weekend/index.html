@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Is it already weekend?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark background */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            margin: 0;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 80%;
+            height: auto;
+        }
+        .friday-message, .friday-gif {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div id="message">Checking if the weekend has started...</div>
+    <img id="gif" src="" alt="Weekend Status Gif">
+    <div id="fridayMessage" class="friday-message"></div>
+    <img id="fridayGif" class="friday-gif" src="" alt="Friday Status Gif">
+
+    <script>
+        function checkWeekend() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+            let message = "No.. not yet";
+            let gif = "sad.gif";
+
+            if ((dayOfWeek === 5 && (currentHour > 17 || (currentHour === 17 && currentMinute >= 0))) ||
+                dayOfWeek === 6 || dayOfWeek === 0 ||
+                (dayOfWeek === 1 && (currentHour === 0 && currentMinute <= 1))) {
+                message = "YAY! FINALLY WEEKEND!";
+                gif = "yay.gif";
+            }
+
+            document.getElementById('message').innerText = message;
+            document.getElementById('gif').src = gif;
+
+            // Additional Friday check for "Bier nach Vier"
+            checkFridaySpecial(dayOfWeek, currentHour);
+        }
+
+        function checkFridaySpecial(dayOfWeek, currentHour) {
+            const fridayMessage = document.getElementById('fridayMessage');
+            const fridayGif = document.getElementById('fridayGif');
+            if (dayOfWeek === 5) { // Only show on Friday
+                fridayMessage.style.display = 'block'; // Make the message visible
+                fridayGif.style.display = 'block'; // Make the GIF visible
+                if (currentHour < 16) {
+                    fridayMessage.innerText = "Soon it's time for Bier nach Vier...";
+                    fridayGif.src = "waiting.gif"; // Set the source to the waiting GIF
+                } else {
+                    fridayMessage.innerText = "Yeah! Cheers! Enjoy Bier nach Vier!";
+                    fridayGif.src = "cheers.gif"; // Set the source to the cheers GIF
+                }
+            }
+        }
+
+        checkWeekend();
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandwich</title>
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://idiotsandwi.ch">
+    <meta property="og:title" content="Sandwich">
+    <meta property="og:description" content="somethingsomething cheesy">
+    <meta property="og:image" content="https://idiotsandwi.ch/sandwich.png">
+    <!-- Version: 1.3.3.7 -->
+    <style>
+        body {
+            background-color: #121212; /* Dark background */
+            color: white;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+            cursor: pointer; /* Indicate the GIF is clickable */
+        }
+    </style>
+</head>
+<body>
+    <img src="sandwich.gif" alt="Sandwich" id="gifImage">
+    <audio id="idiotAudio" src="idiot.mp3" autoplay></audio>
+    <audio id="fanfareAudio" src="fanfare.mp3"></audio>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var idiotAudio = document.getElementById("idiotAudio");
+            idiotAudio.volume = 0.5;
+            var fanfareAudio = document.getElementById("fanfareAudio");
+            var gifImage = document.getElementById("gifImage");
+            var clickCount = 0; // Initialize click count
+
+            gifImage.addEventListener("click", function() {
+                clickCount++; // Increment click count on GIF click
+                if (clickCount === 5) {
+                    window.location.href = "weekend/index.html"; // Redirect after 5 clicks
+                }
+
+                if (gifImage.src.includes("cheese.gif")) {
+                    fanfareAudio.play();
+                } else {
+                    if (idiotAudio.paused) {
+                        idiotAudio.play();
+                    } else {
+                        idiotAudio.currentTime = 0;
+                    }
+                }
+            });
+
+            // Swipe detection for mobile users
+            var touchStartY = 0, touchEndY = 0, touchStartX = 0, touchEndX = 0;
+            var swipeSequence = [], konamiIndex = 0;
+            const swipeEasterEggSequence = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right'];
+            const konamiCode = [38,38,40,40,37,39,37,39,66,65]; // Konami Code for keyboard input
+
+            function checkSwipeDirection() {
+                const yDiff = touchStartY - touchEndY, xDiff = touchStartX - touchEndX;
+                if (Math.abs(xDiff) < Math.abs(yDiff)) { yDiff > 0 ? swipeSequence.push('up') : swipeSequence.push('down'); }
+                else { xDiff > 0 ? swipeSequence.push('left') : swipeSequence.push('right'); }
+                triggerEasterEgg(swipeSequence, swipeEasterEggSequence);
+            }
+
+            function triggerEasterEgg(inputSequence, targetSequence) {
+                if (inputSequence.join(',') === targetSequence.join(',')) {
+                    activateEasterEgg();
+                    inputSequence.length = 0; // Reset sequence
+                }
+            }
+
+            function activateEasterEgg() {
+                fanfareAudio.play();
+                gifImage.src = "cheese.gif";
+            }
+
+            document.addEventListener('touchstart', function(e) {
+                touchStartY = e.changedTouches[0].clientY; touchStartX = e.changedTouches[0].clientX;
+            });
+
+            document.addEventListener('touchend', function(e) {
+                touchEndY = e.changedTouches[0].clientY; touchEndX = e.changedTouches[0].clientX;
+                checkSwipeDirection();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        activateEasterEgg();
+                        konamiIndex = 0; // Reset the index for Konami Code
+                    }
+                } else {
+                    konamiIndex = 0; // Reset if the sequence is incorrect
+                }
+            });
+        });
+    </script>
+</body>
+</html>
