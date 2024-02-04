@@ -36,7 +36,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var idiotAudio = document.getElementById("idiotAudio");
-            idiotAudio.volume = 0.5;
+            idiotAudio.volume = 0.2;
             var fanfareAudio = document.getElementById("fanfareAudio");
             var gifImage = document.getElementById("gifImage");
             var clickCount = 0; // Initialize click count
@@ -54,6 +54,7 @@
                         idiotAudio.play();
                     } else {
                         idiotAudio.currentTime = 0;
+                        idiotAudio.volume = 0.2; // Ensure the volume is set to 20% whenever it plays
                     }
                 }
             });
